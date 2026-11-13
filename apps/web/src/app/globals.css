@@ -1,0 +1,166 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Design tokens. Every color in the UI comes from these variables, so light and dark themes stay
+ * pixel-consistent and components never hard-code colors.
+ */
+:root {
+  color-scheme: light;
+  --background: #f5f7fa;
+  --surface: #ffffff;
+  --surface-muted: #f0f3f7;
+  --surface-hover: #f6f8fb;
+  --border: #e4e9ef;
+  --border-strong: #cdd5df;
+  --foreground: #0f1b2d;
+  --muted-foreground: #5b6b7f;
+  --subtle-foreground: #8b98a9;
+
+  --primary: #0e7c86;
+  --primary-hover: #0b6a73;
+  --primary-foreground: #ffffff;
+  --primary-soft: #e4f4f5;
+  --ring: #0e7c8655;
+
+  --success: #12804a;
+  --success-soft: #e6f6ed;
+  --warning: #b45309;
+  --warning-soft: #fef3e2;
+  --danger: #d0312d;
+  --danger-hover: #b42723;
+  --danger-soft: #fdeceb;
+  --info: #2563eb;
+  --info-soft: #e8effe;
+  --neutral: #5b6b7f;
+  --neutral-soft: #eef1f5;
+
+  /* Validated with the dataviz palette checks against the light surface. */
+  --chart-series: #0091a0;
+  --chart-series-soft: #0091a01f;
+  --chart-grid: #e9edf2;
+
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.06);
+  --shadow-overlay: 0 12px 32px -8px rgb(16 24 40 / 0.18), 0 4px 8px -4px rgb(16 24 40 / 0.08);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #0a111d;
+  --surface: #101a2a;
+  --surface-muted: #152135;
+  --surface-hover: #172539;
+  --border: #1e2b40;
+  --border-strong: #2b3a52;
+  --foreground: #e7edf5;
+  --muted-foreground: #95a4b8;
+  --subtle-foreground: #66768c;
+
+  --primary: #2bb3be;
+  --primary-hover: #45c3cd;
+  --primary-foreground: #042a2e;
+  --primary-soft: #0f2e35;
+  --ring: #2bb3be66;
+
+  --success: #34c27a;
+  --success-soft: #0f2c22;
+  --warning: #f2a33a;
+  --warning-soft: #33250f;
+  --danger: #f06560;
+  --danger-hover: #f47c78;
+  --danger-soft: #3a1717;
+  --info: #6c9cf8;
+  --info-soft: #172648;
+  --neutral: #95a4b8;
+  --neutral-soft: #1b2638;
+
+  /* Validated with the dataviz palette checks against the dark surface. */
+  --chart-series: #1898a6;
+  --chart-series-soft: #1898a62e;
+  --chart-grid: #1c2a3e;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-overlay: 0 16px 40px -8px rgb(0 0 0 / 0.6);
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-neutral: var(--neutral);
+  --color-neutral-soft: var(--neutral-soft);
+  --color-chart-series: var(--chart-series);
+  --color-chart-series-soft: var(--chart-series-soft);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-overlay: var(--shadow-overlay);
+
+  --animate-fade-in: fade-in 160ms ease-out;
+  --animate-scale-in: scale-in 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-in-left: slide-in-left 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: translate(-50%, -48%) scale(0.97); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection {
+    background: var(--primary-soft);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
