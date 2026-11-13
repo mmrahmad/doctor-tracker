@@ -20,6 +20,8 @@ const environmentSchema = z.object({
   ALLOWED_ORIGINS: commaSeparatedList,
 
   MONGODB_URI: z.string().min(1, 'MONGODB_URI is required'),
+  /** Per-instance pool. Keep small on serverless, where many instances share the cluster's connection limit. */
+  MONGODB_MAX_POOL_SIZE: z.coerce.number().int().min(1).max(500).default(50),
   REDIS_URL: z.string().optional().default(''),
 
   ACCESS_TOKEN_SECRET: z.string().min(32, 'ACCESS_TOKEN_SECRET must be at least 32 characters'),
@@ -39,6 +41,7 @@ export interface ApplicationConfig {
   trustedProxyHops: number;
   allowedOrigins: string[];
   mongodbUri: string;
+  mongodbMaxPoolSize: number;
   redisUrl: string | null;
   auth: {
     accessTokenSecret: string;
@@ -68,6 +71,7 @@ export function loadApplicationConfig(source: NodeJS.ProcessEnv = process.env): 
     trustedProxyHops: environment.TRUSTED_PROXY_HOPS,
     allowedOrigins: environment.ALLOWED_ORIGINS,
     mongodbUri: environment.MONGODB_URI,
+    mongodbMaxPoolSize: environment.MONGODB_MAX_POOL_SIZE,
     redisUrl: environment.REDIS_URL || null,
     auth: {
       accessTokenSecret: environment.ACCESS_TOKEN_SECRET,

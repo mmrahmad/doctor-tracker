@@ -10,7 +10,9 @@
 | **Backend** | Node.js · Express 5 · TypeScript · Mongoose 9 · Zod 4 · Pino |
 | **Data** | MongoDB 8 (replica set, transactions) · Redis 7 (cache, rate limits, idempotency) |
 
-**Demo credentials** (created by `pnpm seed`): `admin@doctortracker.dev` / `ChangeMe!2026`
+**Live app:** https://doctor-tracker-web-lemon.vercel.app (API: https://doctor-tracker-api-rho.vercel.app/api/v1/health/ready)
+
+**Demo credentials** for a local setup (created by `pnpm seed`): `admin@doctortracker.dev` / `ChangeMe!2026`. The live deployment uses a separate admin password, shared with reviewers on request.
 
 ---
 
@@ -51,6 +53,17 @@ Open **http://localhost:3100** and sign in with the demo credentials.
 | `pnpm --filter @doctor-tracker/web screenshots` | Regenerate the screenshots below (app must be running) |
 
 Environment files: [`apps/api/.env.example`](apps/api/.env.example) · [`apps/web/.env.example`](apps/web/.env.example). The API validates its environment at startup and refuses to boot with a clear list of problems.
+
+### Deploying to Vercel
+
+The two apps are deployed as two Vercel projects from this monorepo:
+
+| Project | Root directory | What runs |
+|---|---|---|
+| `doctor-tracker-web` | `apps/web` | Next.js app. `API_ORIGIN` points the `/api/*` rewrite at the API project. |
+| `doctor-tracker-api` | `apps/api` | Express app as a Vercel Function ([`api/index.js`](apps/api/api/index.js) → bundled [`serverless-handler.ts`](apps/api/src/serverless-handler.ts)). Connections are reused across warm invocations. |
+
+Production uses **MongoDB Atlas** (a replica set, so transactions work) with `MONGODB_MAX_POOL_SIZE=10` per instance. Redis is optional (`REDIS_URL`, e.g. Upstash); without it the API runs uncached and rate limits are per instance. Set `ALLOWED_ORIGINS` on the API to the web URL, and `ENABLE_EXPERIMENTAL_COREPACK=1` on both projects so Vercel uses the pinned pnpm version. Run `pnpm seed` once against the production database to build indexes and create the admin. [`.vercelignore`](.vercelignore) keeps local env files out of uploads.
 
 ---
 

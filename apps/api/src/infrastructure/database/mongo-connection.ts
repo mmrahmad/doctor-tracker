@@ -3,13 +3,13 @@ import type { Logger } from '../logger';
 
 export async function connectMongo(
   mongodbUri: string,
-  options: { autoIndex: boolean; logger: Logger },
+  options: { autoIndex: boolean; maxPoolSize?: number; logger: Logger },
 ): Promise<Connection> {
   mongoose.set('strictQuery', true);
   await mongoose.connect(mongodbUri, {
     autoIndex: options.autoIndex,
-    maxPoolSize: 50,
-    minPoolSize: 5,
+    maxPoolSize: options.maxPoolSize ?? 50,
+    minPoolSize: 0,
     serverSelectionTimeoutMS: 5_000,
     socketTimeoutMS: 30_000,
     retryWrites: true,

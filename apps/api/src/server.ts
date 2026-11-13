@@ -1,23 +1,13 @@
 import mongoose from 'mongoose';
-import { createApplication } from './app';
-import { loadApplicationConfig } from './config/environment';
-import { buildContainer } from './container';
-import { connectMongo } from './infrastructure/database/mongo-connection';
-import { createLogger } from './infrastructure/logger';
-import { connectRedis } from './infrastructure/redis/redis-client';
+import { bootstrapApplication } from './bootstrap';
 
 const SHUTDOWN_TIMEOUT_MS = 10_000;
 
+/** Long-running HTTP server (local development, containers, VMs). */
 async function startServer(): Promise<void> {
-  const config = loadApplicationConfig();
-  const logger = createLogger({ level: config.logLevel, prettyPrint: !config.isProduction });
+  const { application, infrastructure } = await bootstrapApplication();
+  const { config, logger, redisClient } = infrastructure;
 
-  // In production, indexes are built ahead of time (`pnpm seed` syncs them) instead of on boot.
-  const mongoConnection = await connectMongo(config.mongodbUri, { autoIndex: !config.isProduction, logger });
-  const redisClient = await connectRedis(config.redisUrl, logger);
-
-  const infrastructure = { config, logger, mongoConnection, redisClient };
-  const application = createApplication(infrastructure, buildContainer(infrastructure));
   const httpServer = application.listen(config.port, () => {
     logger.info(`API listening on http://localhost:${config.port}`);
   });

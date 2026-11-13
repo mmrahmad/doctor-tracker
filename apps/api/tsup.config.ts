@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/server.ts', 'src/scripts/seed-database.ts'],
+  entry: ['src/server.ts', 'src/serverless-handler.ts', 'src/scripts/seed-database.ts'],
   format: ['esm'],
   target: 'node20',
   platform: 'node',
