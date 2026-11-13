@@ -1,0 +1,21 @@
+{
+  "name": "doctor-tracker",
+  "private": true,
+  "packageManager": "pnpm@12.10.1",
+  "engines": { "node": ">=20.19" },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @doctor-tracker/api --filter @doctor-tracker/web dev",
+    "build": "pnpm --filter @doctor-tracker/api build && pnpm --filter @doctor-tracker/web build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "seed": "pnpm --filter @doctor-tracker/api seed",
+    "services:up": "docker compose up -d",
+    "services:down": "docker compose down",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "^3",
+    "typescript": "5.9.3"
+  }
+}

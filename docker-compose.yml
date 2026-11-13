@@ -1,0 +1,36 @@
+# Local infrastructure: MongoDB as a single-node replica set (required for transactions) and Redis.
+services:
+  mongodb:
+    image: mongo:8.0
+    container_name: doctor-tracker-mongodb
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    ports:
+      - "${MONGODB_HOST_PORT:-27027}:27017"
+    volumes:
+      - mongodb-data:/data/db
+    healthcheck:
+      # Initiates the replica set on first boot, then reports healthy once a primary exists.
+      test: >
+        mongosh --quiet --eval "try { rs.status().ok } catch (error) { rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'localhost:27017' }] }).ok }"
+      interval: 5s
+      timeout: 10s
+      retries: 30
+      start_period: 5s
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: doctor-tracker-redis
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    ports:
+      - "${REDIS_HOST_PORT:-6389}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  mongodb-data:
+  redis-data:
